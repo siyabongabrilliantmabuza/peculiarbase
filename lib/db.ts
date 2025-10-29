@@ -1,12 +1,18 @@
 import { Pool } from 'pg';
 
-// Use DATABASE_URL from environment variables (for Vercel/Supabase)
-// Fallback to localhost for local development
-const connectionString = process.env.DATABASE_URL || `postgresql://${process.env.PGUSER}:${process.env.PGPASSWORD}@localhost:5432/peculiar_db`;
+// Use DATABASE_URL from environment variables
+// This should be set in Vercel environment variables
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error('DATABASE_URL environment variable is not set');
+}
 
 const pool = new Pool({
   connectionString,
-  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 export async function initDatabase() {
